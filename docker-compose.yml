@@ -1,0 +1,42 @@
+version: '2'
+services:
+ transmission:
+  # image: haugene/transmission-openvpn
+  image: transmission-openvpn
+  cap_add:
+    - NET_ADMIN
+  devices:
+    - /dev/net/tun
+  restart: always
+  ports:
+    - "9091:9091"
+  dns:
+    - 8.8.8.8
+    - 8.8.4.4
+  volumes:
+    # - /private/etc/localtime:/etc/localtime:ro
+    - /Users/alexisbenoist/dl:/data
+  environment:
+    - OPENVPN_PROVIDER=trustzone
+    - OPENVPN_CONFIG=France.udp
+    - OPENVPN_USERNAME="${OPENVPN_USERNAME}"
+    - OPENVPN_PASSWORD="${OPENVPN_PASSWORD}"
+    - OPENVPN_OPTS=--inactive 3600 --ping 10 --ping-exit 60
+    - LOCAL_NETWORK=192.168.0.0/24
+  command: ["sh", "/etc/openvpn/start.sh"]
+
+ proxy:
+  image: haugene/transmission-openvpn-proxy
+  links:
+    - transmission
+  ports:
+    - 8080:8080
+  # volumes:
+  #   - /private/etc/localtime:/etc/localtime:ro
+
+ # rss:
+ #  image: haugene/transmission-rss
+ #  links:
+ #    - transmission
+ #  environment:
+ #    - RSS_URL=http://.../xxxxx.rss
