@@ -1,8 +1,9 @@
 version: '2'
 services:
  transmission:
-  # image: haugene/transmission-openvpn
-  image: transmission-openvpn
+  build:
+    context: .
+#  image: transmission-openvpn
   cap_add:
     - NET_ADMIN
   devices:
